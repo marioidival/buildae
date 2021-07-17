@@ -4,7 +4,7 @@ use buildae::load_patterns;
 
 #[test]
 fn test_load_patterns() -> Result<(), Error> {
-    let (include, exclude) = load_patterns("project", "tests/test.json");
+    let (include, exclude) = load_patterns("project", "tests/data/test.json");
     assert!(include.contains(&String::from("foo/*")));
     assert!(include.contains(&String::from("*.py")));
     assert!(exclude.contains(&String::from("foo/tests/*")));
