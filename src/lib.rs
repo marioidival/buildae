@@ -4,10 +4,10 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
 pub struct IncludeExcludeConfig {
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub include: Vec<String>,
-    #[serde(skip_serializing_if = "Vec::is_empty")]
-    pub exclude: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub include: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub exclude: Option<Vec<String>>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -18,10 +18,10 @@ pub struct ProjectConfig {
 
 #[derive(Serialize, Deserialize)]
 pub struct BuildaeConfig {
-    #[serde(rename = "projects")]
+    #[serde(rename = "projects", skip_serializing_if = "Vec::is_empty")]
     pub projects: Vec<ProjectConfig>,
-    #[serde(rename = "general")]
-    pub general: IncludeExcludeConfig,
+    #[serde(rename = "general", skip_serializing_if = "Option::is_none")]
+    pub general: Option<IncludeExcludeConfig>,
 }
 
 impl BuildaeConfig {
@@ -29,22 +29,38 @@ impl BuildaeConfig {
         let mut includes = Vec::new();
 
         &self.projects.iter().for_each(|project| {
-            includes.extend(project.project.include.clone());
+            includes.extend(project.project.include.as_ref().unwrap().clone());
         });
-        includes.extend(self.general.include.clone());
+        includes.extend(
+            self.general
+                .as_ref()
+                .unwrap()
+                .include
+                .as_ref()
+                .unwrap()
+                .clone(),
+        );
 
-        includes.clone()
+        includes
     }
 
     fn excludes(&self) -> Vec<String> {
         let mut excludes = Vec::new();
 
         &self.projects.iter().for_each(|project| {
-            excludes.extend(project.project.exclude.clone());
+            excludes.extend(project.project.exclude.as_ref().unwrap().clone());
         });
-        excludes.extend(self.general.exclude.clone());
+        excludes.extend(
+            self.general
+                .as_ref()
+                .unwrap()
+                .exclude
+                .as_ref()
+                .unwrap()
+                .clone(),
+        );
 
-        excludes.clone()
+        excludes
     }
 }
 
