@@ -12,3 +12,11 @@ fn test_load_patterns() -> Result<(), Error> {
     assert!(exclude.contains(&String::from("*.rst")));
     Ok(())
 }
+
+#[test]
+fn test_load_patterns_with_no_pattern() -> Result<(), Error> {
+    let (include, exclude) = load_patterns("project", "tests/data/no_pattern.json");
+    assert!(include.contains(&String::from("*")));
+    assert!(exclude.contains(&String::from("*")));
+    Ok(())
+}

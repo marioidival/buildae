@@ -28,6 +28,11 @@ impl BuildaeConfig {
     fn includes(&self) -> Vec<String> {
         let mut includes = Vec::new();
 
+        if self.general.is_none() || self.projects.len() == 0 {
+            includes.push(String::from("*"));
+            return includes;
+        }
+
         &self.projects.iter().for_each(|project| {
             includes.extend(project.project.include.as_ref().unwrap().clone());
         });
@@ -46,6 +51,11 @@ impl BuildaeConfig {
 
     fn excludes(&self) -> Vec<String> {
         let mut excludes = Vec::new();
+
+        if self.general.is_none() || self.projects.len() == 0 {
+            excludes.push(String::from("*"));
+            return excludes;
+        }
 
         &self.projects.iter().for_each(|project| {
             excludes.extend(project.project.exclude.as_ref().unwrap().clone());
