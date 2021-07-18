@@ -1,3 +1,4 @@
+use glob::Pattern;
 use std::{fs::File, io::BufReader};
 
 use serde::{Deserialize, Serialize};
@@ -84,4 +85,19 @@ fn load_json(json_path: &str) -> BuildaeConfig {
 pub fn load_patterns<'a>(_key: &str, json_path: &str) -> (Vec<String>, Vec<String>) {
     let buildae_config = load_json(json_path);
     (buildae_config.includes(), buildae_config.excludes())
+}
+
+pub fn has_diff(files: Vec<&str>, includes: &Vec<String>, excludes: &Vec<String>) -> bool {
+    files
+        .iter()
+        .filter(|file| {
+            !excludes
+                .iter()
+                .any(|pat| Pattern::new(pat).unwrap().matches(file))
+        })
+        .any(|file| {
+            includes
+                .iter()
+                .any(|pat| Pattern::new(pat).unwrap().matches(file))
+        })
 }
