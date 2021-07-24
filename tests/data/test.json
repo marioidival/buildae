@@ -1,21 +1,11 @@
 {
-    "folders": [
-        {
-            "project": {
-                "include": [
-                    "foo/*"
-                ],
-                "exclude": [
-                    "foo/tests/*"
-                ]
-            }
-        }
-    ],
     "general": {
         "include": [
+            "foo/*",
             "*.py"
         ],
         "exclude": [
+            "foo/tests/*",
             "*.md",
             "*.rst"
         ]
