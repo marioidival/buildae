@@ -19,8 +19,8 @@ pub struct ProjectConfig {
 
 #[derive(Serialize, Deserialize)]
 pub struct BuildaeConfig {
-    #[serde(rename = "projects", skip_serializing_if = "Vec::is_empty")]
-    pub projects: Vec<ProjectConfig>,
+    #[serde(rename = "folders", skip_serializing_if = "Vec::is_empty")]
+    pub folders: Vec<ProjectConfig>,
     #[serde(rename = "general", skip_serializing_if = "Option::is_none")]
     pub general: Option<IncludeExcludeConfig>,
 }
@@ -29,12 +29,12 @@ impl BuildaeConfig {
     fn includes(&self) -> Vec<String> {
         let mut includes = Vec::new();
 
-        if self.general.is_none() || self.projects.len() == 0 {
+        if self.general.is_none() || self.folders.len() == 0 {
             includes.push(String::from("*"));
             return includes;
         }
 
-        &self.projects.iter().for_each(|project| {
+        &self.folders.iter().for_each(|project| {
             includes.extend(project.project.include.as_ref().unwrap().clone());
         });
         includes.extend(
@@ -53,12 +53,12 @@ impl BuildaeConfig {
     fn excludes(&self) -> Vec<String> {
         let mut excludes = Vec::new();
 
-        if self.general.is_none() || self.projects.len() == 0 {
+        if self.general.is_none() || self.folders.len() == 0 {
             excludes.push(String::from("*"));
             return excludes;
         }
 
-        &self.projects.iter().for_each(|project| {
+        &self.folders.iter().for_each(|project| {
             excludes.extend(project.project.exclude.as_ref().unwrap().clone());
         });
         excludes.extend(
@@ -82,7 +82,7 @@ fn load_json(json_path: &str) -> BuildaeConfig {
     result
 }
 
-pub fn load_patterns<'a>(_key: &str, json_path: &str) -> (Vec<String>, Vec<String>) {
+pub fn load_patterns(_key: &str, json_path: &str) -> (Vec<String>, Vec<String>) {
     let buildae_config = load_json(json_path);
     (buildae_config.includes(), buildae_config.excludes())
 }
